@@ -16,7 +16,7 @@ public aspect ValidateMove {
     pointcut pieceMove() : execution(boolean isMoveLegal(Move));
 
     boolean around(Move mv) : pieceMove() && within(Rook) && args(mv){
-        if(mv.xF - mv.xI == 0 || mv.yF - mv.yI == 0){
+        if(isRookLegalMove(mv)){
             return true;
         }
         System.out.println("Tour : mauvais placement");
@@ -55,7 +55,6 @@ public aspect ValidateMove {
     }
 
     boolean around(Move mv) : pieceMove() && within(Pawn) && args(mv){
-        proceed(mv);
         if(mv.xF - mv.xI == 0 && mv.yI - mv.yF < 3){
             return true;
         }
@@ -64,15 +63,32 @@ public aspect ValidateMove {
     }
 
     boolean around(Move mv) : pieceMove() && within(Queen) && args(mv){
+        if(isRookLegalMove(mv) || isBishopLegalMove(mv)){
+            return true;
+        }
         System.out.println("Reine : mauvais placement");
         return false;
     }
 
     boolean around(Move mv) : pieceMove() && within(Bishop) && args(mv){
-        if(mv.xF - mv.xI == mv.yF - mv.yI){
+        if(isBishopLegalMove(mv)){
             return true;
         }
         System.out.println("Fou : mauvais placement");
+        return false;
+    }
+
+    boolean isBishopLegalMove(Move mv){
+        if((mv.xF - mv.xI == mv.yF - mv.yI) || (mv.xF - mv.xI == -(mv.yF - mv.yI))){
+            return true;
+        }
+        return false;
+    }
+
+    boolean isRookLegalMove(Move mv){
+        if(mv.xF - mv.xI == 0 || mv.yF - mv.yI == 0){
+            return true;
+        }
         return false;
     }
 
