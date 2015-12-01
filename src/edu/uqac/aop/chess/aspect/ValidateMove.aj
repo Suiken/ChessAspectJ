@@ -13,58 +13,66 @@ import edu.uqac.aop.chess.piece.Rook;
  */
 public aspect ValidateMove {
 
-    pointcut pieceMove() : call(boolean isMoveLegal(Move));
+    pointcut pieceMove() : execution(boolean isMoveLegal(Move));
 
-    around(Move mv) : pieceMove() && within(Bishop) && args(mv){
+    boolean around(Move mv) : pieceMove() && within(Rook) && args(mv){
         if(mv.xF - mv.xI == 0 || mv.yF - mv.yI == 0){
             return true;
         }
+        System.out.println("Tour : mauvais placement");
         return false;
     }
 
-    around(Move mv) : pieceMove() && within(King) && args(mv){
-        if(mv.xF - mv.xI == 1 && mv.yF - mv.yI == 1 ||
-            mv.xF - mv.xI == 1 && mv.yF - mv.yI == 0 ||
-            mv.xF - mv.xI == 1 && mv.yF - mv.yI == -1 ||
-            mv.xF - mv.xI == 0 && mv.yF - mv.yI == -1 ||
-            mv.xF - mv.xI == -1 && mv.yF - mv.yI == -1 ||
-            mv.xF - mv.xI == -1 && mv.yF - mv.yI == 0 ||
-            mv.xF - mv.xI == -1 && mv.yF - mv.yI == 1
-            mv.xF - mv.xI == 0 && mv.yF - mv.yI == 1){
+    boolean around(Move mv) : pieceMove() && within(King) && args(mv){
+        if(     (mv.xF - mv.xI == 1 && mv.yF - mv.yI == 1) ||
+                (mv.xF - mv.xI == 1 && mv.yF - mv.yI == 0) ||
+                (mv.xF - mv.xI == 1 && mv.yF - mv.yI == -1) ||
+                (mv.xF - mv.xI == 0 && mv.yF - mv.yI == -1) ||
+                (mv.xF - mv.xI == -1 && mv.yF - mv.yI == -1) ||
+                (mv.xF - mv.xI == -1 && mv.yF - mv.yI == 0) ||
+                (mv.xF - mv.xI == -1 && mv.yF - mv.yI == 1) ||
+                (mv.xF - mv.xI == 0 && mv.yF - mv.yI == 1)
+        ){
             return true;
         }
+        System.out.println("Roi : mauvais placement");
         return false;
     }
 
-    around(Move mv) : pieceMove() && within(Knight) && args(mv){
-        if(mv.xF - mv.xI == 2 && mv.yF - mv.yI == 1 ||
-            mv.xF - mv.xI == 2 && mv.yF - mv.yI == -1 ||
-            mv.xF - mv.xI == -2 && mv.yF - mv.yI == 1 ||
-            mv.xF - mv.xI == -2 && mv.yF - mv.yI == -1 ||
-            mv.xF - mv.xI == 1 && mv.yF - mv.yI == 2 ||
-            mv.xF - mv.xI == -1 && mv.yF - mv.yI == 2 ||
-            mv.xF - mv.xI == 1 && mv.yF - mv.yI == -2 ||
-            mv.xF - mv.xI == -1 && mv.yF - mv.yI == -2){
+    boolean around(Move mv) : pieceMove() && within(Knight) && args(mv){
+        if(     (mv.xF - mv.xI == 2 && mv.yF - mv.yI == 1) ||
+                (mv.xF - mv.xI == 2 && mv.yF - mv.yI == -1) ||
+                (mv.xF - mv.xI == -2 && mv.yF - mv.yI == 1) ||
+                (mv.xF - mv.xI == -2 && mv.yF - mv.yI == -1) ||
+                (mv.xF - mv.xI == 1 && mv.yF - mv.yI == 2) ||
+                (mv.xF - mv.xI == -1 && mv.yF - mv.yI == 2) ||
+                (mv.xF - mv.xI == 1 && mv.yF - mv.yI == -2) ||
+                (mv.xF - mv.xI == -1 && mv.yF - mv.yI == -2)){
             return true;
         }
+        System.out.println("Cavalier : mauvais placement");
         return false;
     }
 
-    around(Move mv) : pieceMove() && within(Pawn) && args(mv){
-        if(mv.xF - mv.xI == 0 && mv.yI - mv.xf < 3){
+    boolean around(Move mv) : pieceMove() && within(Pawn) && args(mv){
+        proceed(mv);
+        if(mv.xF - mv.xI == 0 && mv.yI - mv.yF < 3){
             return true;
         }
+        System.out.println("Pion : mauvais placement");
         return false;
     }
 
-    around(Move mv) : pieceMove() && within(Queen) && args(mv){
-
+    boolean around(Move mv) : pieceMove() && within(Queen) && args(mv){
+        System.out.println("Reine : mauvais placement");
+        return false;
     }
 
-    around(Move mv) : pieceMove() && within(Rook) && args(mv){
+    boolean around(Move mv) : pieceMove() && within(Bishop) && args(mv){
         if(mv.xF - mv.xI == mv.yF - mv.yI){
             return true;
         }
+        System.out.println("Fou : mauvais placement");
         return false;
     }
 
