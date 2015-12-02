@@ -2,6 +2,7 @@ package edu.uqac.aop.chess.aspect;
 
 import edu.uqac.aop.chess.agent.Move;
 import edu.uqac.aop.chess.Chess;
+import edu.uqac.aop.chess.agent.AiPlayer;
 import edu.uqac.aop.chess.agent.HumanPlayer;
 
 import java.io.BufferedWriter;
@@ -13,16 +14,28 @@ public aspect Log {
 
     public static final String LOG_FILE_NAME = "log.txt";
 
-    pointcut moveMade(): call(* makeMove(..)) && within(HumanPlayerPlayer);
+    pointcut moveMade(): call(* makeMove(..));
 
-    after(Move mv): moveMade() && args(mv){
+    after(Move mv) returning(boolean moveMade): moveMade() && args(mv) && within(AiPlayer){
+        if(moveMade) {
+            appendToLogFile("Ordinateur", mv);
+        }
+    }
+
+    after(Move mv) returning(boolean moveMade): moveMade() && args(mv) && within(HumanPlayer){
+        if(moveMade) {
+            appendToLogFile("Joueur", mv);
+        }
+    }
+
+    private void appendToLogFile(String playerName, Move mv){
         BufferedWriter bw = null;
 
         try {
             File logFile = getLogFile();
             // APPEND MODE SET HERE
             bw = new BufferedWriter(new FileWriter(logFile.getAbsolutePath(), true));
-            bw.write(mv.xI + "" + mv.yI + " en " + mv.xF + "" + mv.yF);
+            bw.write(playerName + " : " + mv.toString());
             bw.newLine();
             bw.flush();
         } catch (IOException ioe) {
@@ -37,7 +50,6 @@ public aspect Log {
             }
         }
     }
-
     pointcut startGame(): call(void play()) && within(Chess);
 
     before(): startGame(){
