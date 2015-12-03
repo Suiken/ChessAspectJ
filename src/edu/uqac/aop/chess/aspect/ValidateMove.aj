@@ -55,8 +55,14 @@ public aspect ValidateMove {
     }
 
     boolean around(Move mv) : pieceMove() && within(Pawn) && args(mv){
-        if(mv.xF - mv.xI == 0 && mv.yI - mv.yF < 3){
-            return true;
+        if(mv.yI == 6 || mv.yI == 1) {
+            if (mv.xF - mv.xI == 0 && (mv.yI - mv.yF < 3 && mv.yI - mv.yF > -3)) {
+                return true;
+            }
+        }else{
+            if (mv.xF - mv.xI == 0 && (mv.yI - mv.yF < 2 && mv.yI - mv.yF > -2)) {
+                return true;
+            }
         }
         System.out.println("Pion : mauvais placement");
         return false;
